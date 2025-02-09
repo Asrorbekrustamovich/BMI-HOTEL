@@ -28,9 +28,45 @@ DEBUG = True
 ALLOWED_HOSTS = ['bmi-hotel.onrender.com', 'localhost', '127.0.0.1']
 
 
+# SECURITY WARNING: Allowing all origins is insecure for production!
+# This allows requests from any domain
+CORS_ALLOW_ALL_ORIGINS = True  
 
+# If you need credentials (e.g., authentication with cookies or tokens)
+CORS_ALLOW_CREDENTIALS = True  
 
-# Application definition
+# Allowed HTTP methods (standard RESTful methods)
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+# Allowed headers (standard HTTP headers)
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+# Alternatively, use regex to allow any origin dynamically
+# Example: Allow any domain with HTTPS or HTTP
+# CORS_ALLOWED_ORIGIN_REGEXES = [
+#     r"^https?://.*$",  # This allows any frontend URL dynamically
+# ]
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https?://.*$",  # Allows any domain with HTTP or HTTPS
+]
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -39,13 +75,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
+    'app',  # Your app
     'rest_framework',
+    'corsheaders',  # Add this for CORS
 ]
 
+
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Add this line
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -53,6 +92,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
 
 ROOT_URLCONF = 'core.urls'
 
