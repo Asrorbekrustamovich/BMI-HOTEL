@@ -102,9 +102,9 @@ class LoginView(APIView):
         username = request.data.get('username')
         password = request.data.get('password')
 
-        # # Check if both fields are provided
-        # if not username or not password:
-        #     return Response({"detail": "Username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
+        # Check if both fields are provided
+        if not username or not password:
+            return Response({"detail": "Username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Try to find the user by username
         user = User.objects.filter(username=username).first()

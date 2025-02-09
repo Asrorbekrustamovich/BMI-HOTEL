@@ -12,7 +12,7 @@ from .views import (
 )
 from .views import UserListCreateView, UserRetrieveUpdateDestroyView
 urlpatterns =[
-    path('login/', LoginView.as_view()),
+    path('login/', LoginView.as_view(),name='login-page'),
     path('users/', UserListCreateView.as_view(), name='user-list-create'),
     path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-retrieve-update-destroy'),
     path('roles/', RoleListCreateView.as_view(), name='role-list-create'),
