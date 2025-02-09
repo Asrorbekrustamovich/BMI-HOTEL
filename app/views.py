@@ -83,18 +83,55 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
 
 
+from django.contrib.auth import authenticate
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import LoginSerializer
+from .models import UserInfo, UserRole
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import UserInfo, UserRole
+from django.contrib.auth.models import User
+
 class LoginView(APIView):
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.validated_data['user']
-            user_info = UserInfo.objects.get(user=user)
-            user_role = UserRole.objects.filter(user=user).first()
+        # Getting the username and password from the request data
+        username = request.data.get('username')
+        password = request.data.get('password')
 
-            response_data = {
-                'userid': user.id,
-                'username': user.username,
-                'role': user_role.role.name if user_role else None,
-            }
-            return Response(response_data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Check if both fields are provided
+        if not username or not password:
+            return Response({"detail": "Username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Try to find the user by username
+        user = User.objects.filter(username=username).first()
+
+        if user is None:
+            return Response({"detail": "Invalid username."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if the password matches (assuming passwords are stored as plain text)
+        if user.password != password:
+            return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        # Get UserInfo if exists
+        try:
+            user_info = UserInfo.objects.get(user=user)
+        except UserInfo.DoesNotExist:
+            user_info = None
+
+        # Get the user's role
+        user_role = UserRole.objects.filter(user=user).first()
+
+        # Prepare the response data
+        response_data = {
+            'userid': user.id,
+            'username': user.username,
+            'role': user_role.role.name if user_role else None,
+            'user_info': user_info.bio if user_info else None,
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
