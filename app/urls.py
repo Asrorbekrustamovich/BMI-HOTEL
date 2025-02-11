@@ -1,5 +1,6 @@
-
+from django.conf import settings
 from django.urls import path
+from django.conf.urls.static import static
 from .views import (
     RoleListCreateView, RoleRetrieveUpdateDestroyView,
     UserInfoListCreateView, UserInfoRetrieveUpdateDestroyView,
@@ -42,3 +43,4 @@ urlpatterns =[
     path('history/', HistoryListView.as_view(), name='history-list'),
     path('history/<int:pk>/', HistoryRetrieveUpdateDestroyView.as_view(), name='history-retrieve-update-destroy'),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
