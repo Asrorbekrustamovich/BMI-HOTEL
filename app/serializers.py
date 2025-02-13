@@ -47,31 +47,32 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
+from rest_framework import serializers
+from django.contrib.auth.models import User
+
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         required=False,   # Password is not required for updates
         allow_blank=True  # Allow blank passwords (optional)
     )
+
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'password']
 
     def create(self, validated_data):
-        # Hash the password before saving
-        validated_data['password'] = make_password(validated_data['password'])
+        # Store the password in plain text (not recommended)
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        # Hash the password if it's being updated
-        # if 'password' in validated_data:
-        #     validated_data['password'] = make_password(validated_data['password'])
+        # Update the password in plain text (not recommended)
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         # Include the password in the response for GET requests
         representation = super().to_representation(instance)
-        representation['password'] = instance.password  # Add the hashed password to the response
-        return representation
+        representation['password'] = instance.password  # Plain text password
+        return representation 
 
 
 class LoginSerializer(serializers.Serializer):
