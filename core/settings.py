@@ -77,9 +77,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app',  # Your app
     'rest_framework',
-    'corsheaders',  # Add this for CORS
+    'corsheaders', 
+    'drf_yasg',
+      # Add this for CORS
 ]
-
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        }
+    }
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Add this line
