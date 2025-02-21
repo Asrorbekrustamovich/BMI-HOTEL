@@ -12,7 +12,9 @@ from .models import UserRole
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from rest_framework.exceptions import NotFound
-
+import django_filters
+from django_filters.rest_framework import DjangoFilterBackend
+from .models import UserInfo
 class RoleListCreateView(generics.ListCreateAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
@@ -20,11 +22,18 @@ class RoleListCreateView(generics.ListCreateAPIView):
 class RoleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
+class UserInfoFilter(django_filters.FilterSet):
+    user_id = django_filters.NumberFilter(field_name='user__id')
 
+    class Meta:
+        model = UserInfo
+        fields = ['user_id']
 # UserInfo Views
 class UserInfoListCreateView(generics.ListCreateAPIView):
     queryset = UserInfo.objects.all()
     serializer_class = UserInfoSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = UserInfoFilter
 
 class UserInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
    serializer_class = UserInfoSerializer
