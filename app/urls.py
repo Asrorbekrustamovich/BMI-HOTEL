@@ -21,7 +21,7 @@ urlpatterns =[
 
     # UserInfo URLs
     path('user-infos/', UserInfoListCreateView.as_view(), name='user-info-list-create'),
-    path('user-infos/<int:pk>/', UserInfoRetrieveUpdateDestroyView.as_view(), name='user-info-retrieve-update-destroy'),
+    path('user-infos/<int:user_id>/', UserInfoRetrieveUpdateDestroyView.as_view(), name='user-info-retrieve-update-destroy with user _id'),
 
     # UserRole URLs
     path('user-roles/', UserRoleListCreateView.as_view(), name='user-role-list-create'),
@@ -43,4 +43,3 @@ urlpatterns =[
     path('history/', HistoryListView.as_view(), name='history-list'),
     path('history/<int:pk>/', HistoryRetrieveUpdateDestroyView.as_view(), name='history-retrieve-update-destroy'),
 ]
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -11,6 +11,8 @@ from .serializers import LoginSerializer
 from .models import UserRole
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
+from rest_framework.exceptions import NotFound
+
 class RoleListCreateView(generics.ListCreateAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
@@ -25,8 +27,13 @@ class UserInfoListCreateView(generics.ListCreateAPIView):
     serializer_class = UserInfoSerializer
 
 class UserInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = UserInfo.objects.all()
-    serializer_class = UserInfoSerializer
+   serializer_class = UserInfoSerializer
+   def get_object(self):
+        user_id = self.kwargs.get('user_id')
+        try:
+            return UserInfo.objects.get(user__id=user_id)
+        except UserInfo.DoesNotExist:
+            raise NotFound("UserInfo with the specified user_id does not exist.")
 
 # UserRole Views
 class UserRoleListCreateView(generics.ListCreateAPIView):
