@@ -1,8 +1,5 @@
 venv/
 *.db
-media/
-staticfiles/
-
 
 
 
