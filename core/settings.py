@@ -22,7 +22,7 @@ import os
 SECRET_KEY = 'django-insecure-q*&2qz37*3z)0yrl092086w+2r2%rce88i_&gs9vb@jq79nbwb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['bmi-hotel.onrender.com', 'localhost', '127.0.0.1']
 
