@@ -43,3 +43,5 @@ urlpatterns =[
     path('history/', HistoryListView.as_view(), name='history-list'),
     path('history/<int:pk>/', HistoryRetrieveUpdateDestroyView.as_view(), name='history-retrieve-update-destroy'),
 ]
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
