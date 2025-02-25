@@ -22,7 +22,8 @@ class UserRole(models.Model):
 
 class Status(models.Model):
     name=models.TextField()
-
+    def __str__(self):
+        return f"{self.name}-{self.id}"
 class Room(models.Model):
     
     room_number=models.TextField()

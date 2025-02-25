@@ -75,7 +75,7 @@ class StatusListCreateView(generics.ListCreateAPIView):
     serializer_class = CustomerSerializer
 
 class StatusRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Customer.objects.all()
+    queryset = Status.objects.all()
     serializer_class = CustomerSerializer   
 # Booking Views
 class BookingListCreateView(generics.ListCreateAPIView):

@@ -42,7 +42,7 @@ urlpatterns =[
     # History URLs
     path('history/', HistoryListView.as_view(), name='history-list'),
     path('history/<int:pk>/', HistoryRetrieveUpdateDestroyView.as_view(), name='history-retrieve-update-destroy'),
-    path("status/,",StatusListCreateView.as_view(),name="for create and get"),
+    path('status/' , StatusListCreateView.as_view(), name="for create and get"),
     path("status/<int:pk>/",StatusRetrieveUpdateDestroyView.as_view(),name="update and delete")
 
 ]
