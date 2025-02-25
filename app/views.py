@@ -1,5 +1,5 @@
 from rest_framework import generics
-from .models import Role, UserInfo, UserRole, Room, Customer, Booking, History
+from .models import Role, UserInfo, UserRole, Room, Customer, Booking, History,Status
 from .serializers import (
     RoleSerializer, UserInfoSerializer, UserRoleSerializer,
     RoomSerializer, CustomerSerializer, BookingSerializer, HistorySerializer
@@ -70,11 +70,29 @@ class CustomerListCreateView(generics.ListCreateAPIView):
 class CustomerRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+class StatusListCreateView(generics.ListCreateAPIView):
+    queryset = Status.objects.all()
+    serializer_class = CustomerSerializer
 
+class StatusRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer   
 # Booking Views
 class BookingListCreateView(generics.ListCreateAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+
+    def perform_create(self, serializer):
+        # Save the booking instance
+        booking = serializer.save()
+
+        # Get the room associated with the booking
+        room = booking.room
+
+        # Update the room status to the status with ID 2 (Booked)
+        booked_status = Status.objects.get(id=2)
+        room.status = booked_status
+        room.save()
 
 class BookingRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Booking.objects.all()

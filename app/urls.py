@@ -9,7 +9,7 @@ from .views import (
     CustomerListCreateView, CustomerRetrieveUpdateDestroyView,
     BookingListCreateView, BookingRetrieveUpdateDestroyView,
     HistoryListView, HistoryRetrieveUpdateDestroyView,
-    LoginView
+    LoginView,StatusListCreateView,StatusRetrieveUpdateDestroyView
 )
 from .views import UserListCreateView, UserRetrieveUpdateDestroyView
 urlpatterns =[
@@ -42,6 +42,9 @@ urlpatterns =[
     # History URLs
     path('history/', HistoryListView.as_view(), name='history-list'),
     path('history/<int:pk>/', HistoryRetrieveUpdateDestroyView.as_view(), name='history-retrieve-update-destroy'),
+    path("status/,",StatusListCreateView.as_view(),name="for create and get"),
+    path("status/<int:pk>/",StatusRetrieveUpdateDestroyView.as_view(),name="update and delete")
+
 ]
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

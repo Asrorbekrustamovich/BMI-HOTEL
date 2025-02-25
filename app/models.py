@@ -19,10 +19,15 @@ class UserRole(models.Model):
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.user.username} - {self.role.name}"
+
+class Status(models.Model):
+    name=models.TextField()
+
 class Room(models.Model):
+    
     room_number=models.TextField()
     room_type=models.TextField()
-    status=models.TextField()
+    status = models.ForeignKey(Status,on_delete=models.CASCADE,default=1)
     price=models.IntegerField()
 
 class Customer(models.Model):

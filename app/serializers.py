@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Role, UserInfo, UserRole, Room, Customer, Booking, History
+from .models import Role, UserInfo, UserRole, Room, Customer, Booking, History,Status
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from django.contrib.auth import authenticate
@@ -11,7 +11,10 @@ class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = '__all__'
-
+class StatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Status
+        fields = '__all__'
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfo
