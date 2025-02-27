@@ -2,7 +2,7 @@ from rest_framework import generics
 from .models import Role, UserInfo, UserRole, Room, Customer, Booking, History,Status
 from .serializers import (
     RoleSerializer, UserInfoSerializer, UserRoleSerializer,
-    RoomSerializer, CustomerSerializer, BookingSerializer, HistorySerializer
+    RoomSerializer, CustomerSerializer, BookingSerializer, HistorySerializer,StatusSerializer
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -72,7 +72,7 @@ class CustomerRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CustomerSerializer
 class StatusListCreateView(generics.ListCreateAPIView):
     queryset = Status.objects.all()
-    serializer_class = CustomerSerializer
+    serializer_class = StatusSerializer
 
 class StatusRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Status.objects.all()
