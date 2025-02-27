@@ -1,12 +1,26 @@
 from rest_framework import serializers
-from .models import Role, UserInfo, UserRole, Room, Customer, Booking, History,Status
+from .models import Role, Bio, UserRole, Room, Customer, Booking, Status,Message,Department
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import UserInfo, Role
+from .models import Bio, Role
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+from rest_framework import serializers
+from django.contrib.auth.models import User
+
+from rest_framework import serializers
+from django.contrib.auth.models import User
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = '__all__'
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
@@ -17,7 +31,7 @@ class StatusSerializer(serializers.ModelSerializer):
         fields = '__all__'
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserInfo
+        model = Bio
         fields = '__all__'
 
 class UserRoleSerializer(serializers.ModelSerializer):
@@ -39,19 +53,6 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = '__all__'
-
-class HistorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = History
-        fields = '__all__'
-
-
-from rest_framework import serializers
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
-
-from rest_framework import serializers
-from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
