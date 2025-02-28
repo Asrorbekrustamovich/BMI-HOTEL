@@ -441,7 +441,7 @@ class LoginView(APIView):
             'userid': user.id,
             'username': user.username,
             'role': user_role.role.name if user_role else None,
-            'user_info': user_info.bio if user_info else None,
+            'user_info': user_info. bio_text if user_info else None,
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
