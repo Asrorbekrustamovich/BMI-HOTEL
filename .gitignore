@@ -1,6 +1,7 @@
 venv/
 *.db
-
+media/
+images/
 
 
 

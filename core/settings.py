@@ -132,11 +132,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'railway',
         'USER': 'postgres',
-        'PASSWORD': 'rsmmvADUAwyjCwQJvgYKXgRKFnbrZoEA',
-        'HOST': 'caboose.proxy.rlwy.net',
-        'PORT': '13205',
+        'PASSWORD': 'gvMqVbdSmCNFlvdvmPhIYLKIgcEtujXI',
+        'HOST': 'centerbeam.proxy.rlwy.net',
+        'PORT': '59869',
     }
 }
+
+
+
 
 
 

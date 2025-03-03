@@ -40,9 +40,14 @@ class Status(models.Model):
     def __str__(self):
         return f"{self.name}-{self.id}"
 
+class Roomtype(models.Model):
+    name=models.TextField()
+    def __str__(self):
+        return self.name
+    
 class Room(models.Model):
     room_number = models.TextField()
-    room_type = models.TextField()
+    room_type = models.ForeignKey(Roomtype,on_delete=models.CASCADE)
     status = models.ForeignKey(Status, on_delete=models.CASCADE, default=1)
     price = models.IntegerField()
 
@@ -60,6 +65,8 @@ class Customer(models.Model):
 
 class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
+    ordered_time=models.DateTimeField(null=True)
+    finish_time=models.DateTimeField(null=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
 

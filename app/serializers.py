@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Role, Bio, UserRole, Room, Customer, Booking, Status,Message,Department
+from .models import Role, Bio, UserRole, Room, Customer, Booking, Status,Message,Department,Roomtype
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from django.contrib.auth import authenticate
@@ -17,6 +17,10 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         fields = '__all__'
 
+class RoomTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Roomtype
+        fields='__all__'
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department

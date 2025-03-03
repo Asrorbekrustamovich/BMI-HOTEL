@@ -15,13 +15,14 @@ from .views import (
     MessageList_beetween_manager_and_workers_View_For_Worker, ManagerAdmin_and_manager_MessageListView_for_admin,
     ManagerAdmin_and_manager_MessageListView_for_Manager, ManagerSendMessageToWorkersView,
     ManagerSendMessageToAdminView, AdminSendMessageToManagerView,
-    DepartmentListCreateView, DepartmentRetrieveUpdateDestroyView
+    DepartmentListCreateView, DepartmentRetrieveUpdateDestroyView,RoomTypeDeleteUpdateView,RoomTypeListCreateView
 )
 
 urlpatterns = [
     # Authentication
     path('login/', LoginView.as_view(), name='login-page'),
-
+    path('room-types/', RoomTypeListCreateView.as_view(), name='roomtype-list'),
+    path('room-types/<int:pk>/', RoomTypeDeleteUpdateView.as_view(), name='roomtype-detail'),
     # User URLs
     path('users/', UserListCreateView.as_view(), name='user-list-create'),
     path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-retrieve-update-destroy'),

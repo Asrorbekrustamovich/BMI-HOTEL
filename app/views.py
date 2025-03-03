@@ -1,8 +1,8 @@
 from rest_framework import generics
-from .models import Role, Bio, UserRole, Room, Customer, Booking,Status,Message,Department
+from .models import Role, Bio, UserRole, Room, Customer, Booking,Status,Message,Department,Roomtype
 from .serializers import (
     RoleSerializer, UserInfoSerializer, UserRoleSerializer,
-    RoomSerializer, CustomerSerializer, BookingSerializer,StatusSerializer,MessageSerializer,DepartmentSerializer
+    RoomSerializer, CustomerSerializer, BookingSerializer,StatusSerializer,MessageSerializer,DepartmentSerializer,RoomTypeSerializer
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -22,6 +22,15 @@ class RoleListCreateView(generics.ListCreateAPIView):
 class RoleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
+
+class RoomTypeListCreateView(generics.ListCreateAPIView):
+    queryset=Roomtype.objects.all()
+    serializer_class=RoomTypeSerializer
+
+class RoomTypeDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Roomtype.objects.all()
+    serializer_class=RoomTypeSerializer  
+
 class UserInfoFilter(django_filters.FilterSet):
     user_id = django_filters.NumberFilter(field_name='user__id')
 
@@ -86,22 +95,11 @@ class StatusListCreateView(generics.ListCreateAPIView):
 class StatusRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Status.objects.all()
     serializer_class = CustomerSerializer   
-# Booking Views
+
+
 class BookingListCreateView(generics.ListCreateAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-
-    def perform_create(self, serializer):
-        # Save the booking instance
-        booking = serializer.save()
-
-        # Get the room associated with the booking
-        room = booking.room
-
-        # Update the room status to the status with ID 2 (Booked)
-        booked_status = Status.objects.get(id=2)
-        room.status = booked_status
-        room.save()
 
 class BookingRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Booking.objects.all()
