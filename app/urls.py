@@ -10,11 +10,7 @@ from .views import (
     BookingListCreateView, BookingRetrieveUpdateDestroyView,
     LoginView, StatusListCreateView, StatusRetrieveUpdateDestroyView,
     UserListCreateView, UserRetrieveUpdateDestroyView,
-    MessageListCreateView, MessageRetrieveUpdateDestroyView,
-    WorkerSendMessageToManagerView, MessageList_beetween_manager_and_workers_View_For_manager,
-    MessageList_beetween_manager_and_workers_View_For_Worker, ManagerAdmin_and_manager_MessageListView_for_admin,
-    ManagerAdmin_and_manager_MessageListView_for_Manager, ManagerSendMessageToWorkersView,
-    ManagerSendMessageToAdminView, AdminSendMessageToManagerView,
+    MessageListCreateView, MessageRetrieveUpdateDestroyView, MessageExchangeView,
     DepartmentListCreateView, DepartmentRetrieveUpdateDestroyView,RoomTypeDeleteUpdateView,RoomTypeListCreateView
 )
 
@@ -62,30 +58,8 @@ urlpatterns = [
     # Message URLs
     path('messages/', MessageListCreateView.as_view(), name='message-list-create'),
     path('messages/<int:pk>/', MessageRetrieveUpdateDestroyView.as_view(), name='message-retrieve-update-destroy'),
-
-    # Worker sends message to manager
-    path('workers-send-message-to-manager/<int:user_id>/', WorkerSendMessageToManagerView.as_view(), name='worker-send-message-to-manager'),
-
-    # Manager sends message to workers
-    path('manager-send-message-to-workers/<int:user_id>/', ManagerSendMessageToWorkersView.as_view(), name='manager-send-message-to-workers'),
-
-    # Manager sends message to admin
-    path('manager-send-message-to-admin/<int:user_id>/', ManagerSendMessageToAdminView.as_view(), name='manager-send-message-to-admin'),
-
-    # Admin sends message to manager
-    path('admin-send-message-to-manager/<int:receiver_id>/', AdminSendMessageToManagerView.as_view(), name='admin-send-message-to-manager'),
-
-    # Messages between manager and workers (for manager)
-    path('messages-between-manager-and-workers/manager/<int:sender_id>/<int:receiver_id>/', MessageList_beetween_manager_and_workers_View_For_manager.as_view(), name='messages-between-manager-and-workers-manager'),
-
-    # Messages between manager and workers (for worker)
-    path('messages-between-manager-and-workers/worker/<int:sender_id>/<int:receiver_id>/', MessageList_beetween_manager_and_workers_View_For_Worker.as_view(), name='messages-between-manager-and-workers-worker'),
-
-    # Messages between admin and manager (for admin)
-    path('messages-between-admin-and-manager/admin/<int:sender_id>/<int:receiver_id>/', ManagerAdmin_and_manager_MessageListView_for_admin.as_view(), name='messages-between-admin-and-manager-admin'),
-
-    # Messages between admin and manager (for manager)
-    path('messages-between-admin-and-manager/manager/<int:sender_id>/<int:receiver_id>/', ManagerAdmin_and_manager_MessageListView_for_Manager.as_view(), name='messages-between-admin-and-manager-manager'),
+    path('messages/<int:sender_id>/<int:receiver_id>/', MessageExchangeView.as_view(), name='message-exchange'),
+   
 ]
 
 # Serve media files during development

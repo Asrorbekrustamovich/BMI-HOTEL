@@ -127,282 +127,41 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Bio, Message, Department, User
+from .models import Message, User
 from .serializers import MessageSerializer
 
-class WorkerSendMessageToManagerView(APIView):
-    def post(self, request, user_id):
-        # Get the worker's Bio
-        worker_bio = get_object_or_404(Bio, user_id=user_id)
+class MessageExchangeView(APIView):
+    def get(self, request, *args, **kwargs):
+        # Extract sender_id and receiver_id from kwargs
+        sender_id = kwargs.get('sender_id')
+        receiver_id = kwargs.get('receiver_id')
 
-        # Ensure the worker has a department
-        if not worker_bio.department:
-            return Response(
-                {"error": "Worker does not belong to any department."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Find the manager in the same department
-        manager_bio = Bio.objects.filter(
-            department=worker_bio.department,
-            position="Manager"  # Assuming "Manager" is the position title for managers
-        ).first()
-
-        if not manager_bio:
-            return Response(
-                {"error": "No manager found in the same department."},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        # Get the message content from the request
-        content = request.data.get("content")
-        if not content:
-            return Response(
-                {"error": "Message content is required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Create the message
-        message = Message.objects.create(
-            sender=worker_bio.user,
-            receiver=manager_bio.user,
-            content=content
-        )
-
-        # Serialize the message and return the response
-        serializer = MessageSerializer(message)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-class MessageList_beetween_manager_and_workers_View_For_manager(APIView):
-    def get(self, request, sender_id, receiver_id):
-        # Foydalanuvchilarni olish
+        # Get sender and receiver users
         sender = get_object_or_404(User, id=sender_id)
         receiver = get_object_or_404(User, id=receiver_id)
 
-        # Sender va receiver o‘rtasidagi barcha xabarlarni olish
+        # Fetch all messages sent by the sender to the receiver
         sent_messages = Message.objects.filter(sender=sender, receiver=receiver)
+
+        # Fetch all messages sent by the receiver to the sender
         received_messages = Message.objects.filter(sender=receiver, receiver=sender)
 
-        # Ikkala querysetni birlashtirish
-        messages = sent_messages.union(received_messages).order_by("timestamp")
+        # Combine all messages between the two users
+        all_messages = sent_messages.union(received_messages).order_by("timestamp")
 
-        # Agar xabarlar bo‘lmasa
-        if not messages.exists():
-            return Response({"message": "No messages found between these users."}, status=status.HTTP_404_NOT_FOUND)
-
-        # Serialize va javob qaytarish
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-class MessageList_beetween_manager_and_workers_View_For_Worker(APIView):
-    def get(self, request, sender_id, receiver_id):
-        # Foydalanuvchilarni olish
-        sender = get_object_or_404(User, id=sender_id)
-        receiver = get_object_or_404(User, id=receiver_id)
-
-        # Sender va receiver o‘rtasidagi barcha xabarlarni olish
-        sent_messages = Message.objects.filter(sender=sender, receiver=receiver)
-        received_messages = Message.objects.filter(sender=receiver, receiver=sender)
-
-        # Ikkala querysetni birlashtirish
-        messages = sent_messages.union(received_messages).order_by("timestamp")
-
-        # Agar xabarlar bo‘lmasa
-        if not messages.exists():
-            return Response({"message": "No messages found between these users."}, status=status.HTTP_404_NOT_FOUND)
-
-        # Serialize va javob qaytarish
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-class ManagerAdmin_and_manager_MessageListView_for_admin(APIView):
-    def get(self, request, sender_id, receiver_id):
-        # Jo‘natuvchi va qabul qiluvchini olish
-        sender_user = get_object_or_404(User, id=sender_id)
-        receiver_user = get_object_or_404(User, id=receiver_id)
-
-        # Xabarlar faqat manager va admin o‘rtasida bo‘lishi kerak
-        sender_bio = get_object_or_404(Bio, user=sender_user)
-        receiver_bio = Bio.objects.filter(user=receiver_user).first()  # Admin uchun bo‘lishi shart emas
-
-        if sender_bio.position.lower() not in ["manager", "admin"]:
+        # If no messages exist, return a 404 response
+        if not all_messages.exists():
             return Response(
-                {"error": "Only managers and admins can have conversations."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
-        if receiver_bio and receiver_bio.position.lower() not in ["manager", "admin"]:
-            return Response(
-                {"error": "Messages can only be exchanged between managers and admins."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Sender va receiver o‘rtasidagi barcha xabarlarni olish
-        sent_messages = Message.objects.filter(sender=sender_user, receiver=receiver_user)
-        received_messages = Message.objects.filter(sender=receiver_user, receiver=sender_user)
-
-        # Ikkala querysetni birlashtirish va vaqt bo‘yicha tartiblash
-        messages = sent_messages.union(received_messages).order_by("timestamp")
-
-        # Agar xabarlar bo‘lmasa
-        if not messages.exists():
-            return Response({"message": "No messages found between these users."}, status=status.HTTP_404_NOT_FOUND)
-
-        # Serialize va javob qaytarish
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-class ManagerAdmin_and_manager_MessageListView_for_Manager(APIView):
-    def get(self, request, sender_id, receiver_id):
-        # Jo‘natuvchi va qabul qiluvchini olish
-        sender_user = get_object_or_404(User, id=sender_id)
-        receiver_user = get_object_or_404(User, id=receiver_id)
-
-        # Xabarlar faqat manager va admin o‘rtasida bo‘lishi kerak
-        sender_bio = get_object_or_404(Bio, user=sender_user)
-        receiver_bio = Bio.objects.filter(user=receiver_user).first()  # Admin uchun bo‘lishi shart emas
-
-        if sender_bio.position.lower() not in ["manager", "admin"]:
-            return Response(
-                {"error": "Only managers and admins can have conversations."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
-        if receiver_bio and receiver_bio.position.lower() not in ["manager", "admin"]:
-            return Response(
-                {"error": "Messages can only be exchanged between managers and admins."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Sender va receiver o‘rtasidagi barcha xabarlarni olish
-        sent_messages = Message.objects.filter(sender=sender_user, receiver=receiver_user)
-        received_messages = Message.objects.filter(sender=receiver_user, receiver=sender_user)
-
-        # Ikkala querysetni birlashtirish va vaqt bo‘yicha tartiblash
-        messages = sent_messages.union(received_messages).order_by("timestamp")
-
-        # Agar xabarlar bo‘lmasa
-        if not messages.exists():
-            return Response({"message": "No messages found between these users."}, status=status.HTTP_404_NOT_FOUND)
-
-        # Serialize va javob qaytarish
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-class ManagerSendMessageToWorkersView(APIView):
-    def post(self, request, user_id):
-        # Menejerning Bio ma'lumotlarini olish
-        manager_bio = get_object_or_404(Bio, user_id=user_id)
-
-        # Menejer ekanligini tekshirish
-        if manager_bio.position.lower() != "manager":
-            return Response(
-                {"error": "Only managers are allowed to send messages to workers."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
-        # Menejerning bo‘limidagi ishchilarni topish
-        workers = Bio.objects.filter(department=manager_bio.department, position="Worker")
-
-        if not workers.exists():
-            return Response(
-                {"error": "No workers found in the same department."},
+                {"message": "No messages found between these users."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        # Xabar mazmunini olish
-        content = request.data.get("content")
-        if not content:
-            return Response(
-                {"error": "Message content is required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        # Mark only the messages sent by the receiver to the sender as read
+        received_messages.update(is_read=True)
 
-        # Ishchilarga xabar yuborish
-        messages = [
-            Message(sender=manager_bio.user, receiver=worker.user, content=content)
-            for worker in workers
-        ]
-        Message.objects.bulk_create(messages)  # Yagona so‘rov bilan bir nechta xabar yaratish
-
-        return Response(
-            {"message": "Message sent to all workers in the department."},
-            status=status.HTTP_201_CREATED
-        )
-
-    
-class ManagerSendMessageToAdminView(APIView):
-    def post(self, request, user_id):
-        # Get the manager's Bio
-        manager_bio = get_object_or_404(Bio, user_id=user_id)
-
-        # Ensure the sender is a manager
-        if manager_bio.position.lower() != "manager":
-            return Response(
-                {"error": "Only managers are allowed to send messages to the admin."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
-        # Get the admin user (assuming admin has user_id = 1)
-        admin_user = get_object_or_404(User, id=1)
-
-        # Get the message content from the request
-        content = request.data.get("content")
-        if not content:
-            return Response(
-                {"error": "Message content is required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Create the message
-        message = Message.objects.create(
-            sender=manager_bio.user,
-            receiver=admin_user,
-            content=content
-        )
-
-        # Serialize the message and return the response
-        serializer = MessageSerializer(message)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-class AdminSendMessageToManagerView(APIView):
-    def post(self, request,receiver_id):
-        # Admin foydalanuvchisini olish
-        admin_user = get_object_or_404(User, id=1)
-
-        # Admin ekanligini tekshirish (Bio modelidagi pozitsiya orqali)
-        admin_bio = get_object_or_404(Bio, user=admin_user)
-        if admin_bio.position.lower() != "admin":
-            return Response(
-                {"error": "Only admins are allowed to send messages to managers."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
-        # Xabar yuboriladigan menejerni topish
-        manager_bio = get_object_or_404(Bio, user_id=receiver_id)
-
-        # Menejer ekanligini tekshirish
-        if manager_bio.position.lower() != "manager":
-            return Response(
-                {"error": "The recipient must be a manager."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Xabar mazmunini olish
-        content = request.data.get("content")
-        if not content:
-            return Response(
-                {"error": "Message content is required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Xabar yaratish
-        message = Message.objects.create(
-            sender=admin_user,
-            receiver=manager_bio.user,
-            content=content
-        )
-
-        # Serialize va javob qaytarish
-        serializer = MessageSerializer(message)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+        # Serialize and return all messages
+        serializer = MessageSerializer(all_messages, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class LoginView(APIView):
     def post(self, request):
