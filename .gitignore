@@ -1,0 +1,8 @@
+venv/
+*.db
+media/
+images/
+
+
+
+
